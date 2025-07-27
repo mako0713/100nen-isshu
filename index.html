@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百年一首</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <audio id="bgm-audio" src="sound/ks008.mp3" loop></audio>
+    <audio id="sfx-card-correct" src="sound/Quiz-Button02-1(Multi).mp3" preload="auto"></audio>
+    <audio id="sfx-quiz-show" src="sound/Quiz-Question.mp3" preload="auto"></audio>
+    <audio id="sfx-quiz-correct" src="sound/Quiz-Ding_Dong.mp3" preload="auto"></audio>
+    <audio id="sfx-quiz-wrong" src="sound/Quiz-wrong.mp3" preload="auto"></audio>
+    <audio id="sfx-results" src="sound/Quiz-Results01-1.mp3" preload="auto"></audio>
+
+    <div id="selection-container">
+        <h1>百年一首</h1>
+        <div id="selection-buttons">
+            <button id="start-quiz-game-btn" class="selection-btn">早押しかるたクイズ編</button>
+            <button id="start-reading-game-btn" class="selection-btn" disabled>読み上げかるた想起編 (準備中)</button>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <h1>百年一首</h1>
+        <div id="yomifuda-display">
+            <p id="kami-ku-text">　　　早押しカルタクイズ編　1～20番</p>
+            <p id="shimo-ku-text"></p>
+        </div>
+        <div id="torifuda-container"></div>
+        <div id="info-area">
+            <p id="message">集中力を高め、限界に挑んでください！！</p>
+            <p>残り札: <span id="remaining-count">20</span>枚 / スコア: <span id="score">0</span></p>
+        </div>
+        <button id="start-button">ゲームスタート！</button>
+    </div>
+
+    <div id="results-container" class="modal-backdrop hidden">
+        <div id="results-content" class="modal-content"></div>
+    </div>
+
+    <div id="quiz-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <h2 id="quiz-question"></h2>
+            <div id="quiz-content-area"></div>
+            <p id="quiz-result"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
