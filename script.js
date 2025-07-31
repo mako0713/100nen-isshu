@@ -1,4 +1,4 @@
-// script.js の全コード（画面遷移修正版）
+// script.js の全コード（ロジック分離・最終完成版）
 
 const karutaData = [
     { id: 1, kami: "後漢から/金印もらった/奴国の王", kami_yomi: "ごかんから/きんいんもらった/なこくのおう", shimo: "こんな金印/もらっていいの？", shimo_yomi: "こんなきんいん/もらっていいの", quizzes: [
@@ -106,11 +106,15 @@ const karutaData = [
 // ゲーム設定
 const ROUND_DURATION = 14000;
 const CARDS_PER_ROUND = 10;
-const RANK_B_LIMIT = 1500;
+const RECALL_CARDS_PER_ROUND = 10;
+const RECALL_ANIMATION_INTERVAL = 3000;
+const RECALL_ROUND_TIMEOUT = 15000;
 const QUIZ_CORRECT_BONUS = 1;
 
 const ranks = ['SS', 'S', 'A', 'B', 'C'];
 const rankPoints = { SS: 6, S: 5, A: 4, B: 3, C: 2, D: 1, E: 0 };
+const recallRanks = ['S', 'A', 'B', 'C', 'D'];
+const recallRankPoints = { S: 5, A: 4, B: 3, C: 2, D: 1, E: 0 };
 
 // HTMLの要素を取得
 const selectionContainer = document.getElementById('selection-container');
@@ -136,35 +140,52 @@ const sfxQuizCorrect = document.getElementById('sfx-quiz-correct');
 const sfxQuizWrong = document.getElementById('sfx-quiz-wrong');
 const sfxResults = document.getElementById('sfx-results');
 
+// ゲームの状態を管理する変数
 let speechQueue = [];
-let currentPoem = null;
-let remainingPoems = [...karutaData];
-let totalScore = 0;
-let rankCounts = { SS: 0, S: 0, A: 0, B: 0, C: 0, D: 0, E: 0 };
-let isGameActive = false;
-let answeredInRound = false;
-let currentPhraseIndex = 0;
-let mistakeMadeInRound = false;
-let quizTimer = null;
-let roundTimer = null;
 let isBgmPlaying = false;
 
+// 早押しクイズ編用の変数
+let quizCurrentPoem = null;
+let quizRemainingPoems = [];
+let quizTotalScore = 0;
+let quizRankCounts = { SS: 0, S: 0, A: 0, B: 0, C: 0, D: 0, E: 0 };
+let quizIsGameActive = false;
+let quizAnsweredInRound = false;
+let quizCurrentPhraseIndex = 0;
+let quizMistakeMadeInRound = false;
+let quizTimer = null;
+let quizRoundTimer = null;
+
+// 想起編用の変数
+let recallQuestions = [];
+let recallTotalScore = 0;
+let recallRankCounts = { S: 0, A: 0, B: 0, C: 0, D: 0, E: 0 };
+let recallAnimationTimer = null;
+let recallRoundTimer = null;
+let recallCurrentFrame = 1;
+
+
+// --- イベントリスナー ---
 startQuizGameBtn.addEventListener('click', () => {
     selectionContainer.classList.add('hidden');
     gameContainer.classList.remove('hidden');
-
     if (bgmAudio) {
         bgmAudio.volume = 0.3;
         bgmAudio.play().catch(e => console.error("BGM playback failed:", e));
         isBgmPlaying = true;
     }
-    
-    // ゲームのスタート画面にある、見えないスタートボタンは押さない
-    // document.getElementById('start-button').click(); // ★★★ この行を削除 ★★★
 });
 
-startButton.addEventListener('click', startGame);
+startButton.addEventListener('click', () => startGame(true));
 
+startReadingGameBtn.addEventListener('click', () => {
+    selectionContainer.classList.add('hidden');
+    gameContainer.classList.remove('hidden');
+    startRecallGame();
+});
+
+
+// --- 便利関数 ---
 function playSound(audioElement) {
     if (audioElement) {
         audioElement.currentTime = 0;
@@ -197,35 +218,43 @@ function speak(text) {
     });
 }
 
-function startGame() {
-    if (isBgmPlaying && bgmAudio) {
-        bgmAudio.pause();
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
+}
 
-    if (roundTimer) clearTimeout(roundTimer);
+
+// --- 早押しかるたクイズ編 ---
+function startGame(isFirstRound = false) {
+    if (isFirstRound) {
+        quizRemainingPoems = [...karutaData];
+        quizTotalScore = 0;
+        quizRankCounts = { SS: 0, S: 0, A: 0, B: 0, C: 0, D: 0, E: 0 };
+    }
+    if (isBgmPlaying && bgmAudio) bgmAudio.pause();
+    if (quizRoundTimer) clearTimeout(quizRoundTimer);
     if (quizTimer) clearTimeout(quizTimer);
     quizModal.classList.add('hidden');
     window.speechSynthesis.cancel();
     speechQueue = [];
-
-    if (remainingPoems.length === 0) {
-        showFinalResults();
+    if (quizRemainingPoems.length === 0) {
+        showFinalResults("quiz");
         return;
     }
-    
-    isGameActive = true;
-    answeredInRound = false;
-    mistakeMadeInRound = false;
-    currentPhraseIndex = 0;
+    quizIsGameActive = true;
+    quizAnsweredInRound = false;
+    quizMistakeMadeInRound = false;
+    quizCurrentPhraseIndex = 0;
     startButton.style.display = 'none';
     messageEl.textContent = " ";
-    remainingCountEl.textContent = remainingPoems.length;
-    scoreEl.textContent = totalScore;
-    
-    const correctPoemIndex = Math.floor(Math.random() * remainingPoems.length);
-    currentPoem = remainingPoems[correctPoemIndex];
-    let displayCards = [currentPoem];
-    let dummyPoems = karutaData.filter(p => p.id !== currentPoem.id);
+    remainingCountEl.textContent = quizRemainingPoems.length;
+    scoreEl.textContent = quizTotalScore;
+    const correctPoemIndex = Math.floor(Math.random() * quizRemainingPoems.length);
+    quizCurrentPoem = quizRemainingPoems[correctPoemIndex];
+    let displayCards = [quizCurrentPoem];
+    let dummyPoems = karutaData.filter(p => p.id !== quizCurrentPoem.id);
     shuffleArray(dummyPoems);
     displayCards.push(...dummyPoems.slice(0, CARDS_PER_ROUND - 1));
     shuffleArray(displayCards);
@@ -239,80 +268,67 @@ function startGame() {
         cardImage.addEventListener('click', onCardClick);
         torifudaContainer.appendChild(cardImage);
     });
-
     readPoem();
-    
-    roundTimer = setTimeout(handleTimeout, ROUND_DURATION);
+    quizRoundTimer = setTimeout(handleTimeout, ROUND_DURATION);
 }
 
 function handleTimeout() {
-    if (!answeredInRound) {
+    if (!quizAnsweredInRound) {
         messageEl.textContent = "時間切れ！";
-        rankCounts.E++;
-        remainingPoems = remainingPoems.filter(p => p.id !== currentPoem.id);
+        quizRankCounts.E++;
+        quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
     }
     startGame();
 }
 
 async function readPoem() {
-    const kamiPhrases = currentPoem.kami.split('/');
-    const kamiYomiPhrases = currentPoem.kami_yomi.split('/');
-    const shimoPhrase = currentPoem.shimo.split('/').join(' ');
-    const shimoYomiPhrase = currentPoem.shimo_yomi.split('/').join(' ');
+    const kamiPhrases = quizCurrentPoem.kami.split('/');
+    const kamiYomiPhrases = quizCurrentPoem.kami_yomi.split('/');
+    const shimoPhrase = quizCurrentPoem.shimo.split('/').join(' ');
+    const shimoYomiPhrase = quizCurrentPoem.shimo_yomi.split('/').join(' ');
     kamiKuText.textContent = ' ';
     shimoKuText.textContent = ' ';
     for (let i = 0; i < kamiPhrases.length; i++) {
-        currentPhraseIndex = i;
+        quizCurrentPhraseIndex = i;
         kamiKuText.textContent += kamiPhrases[i] + ' ';
         await speak(kamiYomiPhrases[i]);
     }
-    
-    currentPhraseIndex = 3;
+    quizCurrentPhraseIndex = 3;
     shimoKuText.textContent = shimoPhrase;
     setTimeout(() => {
-        if (!answeredInRound) {
-            currentPhraseIndex = 4;
-        }
+        if (!quizAnsweredInRound) quizCurrentPhraseIndex = 4;
     }, RANK_B_LIMIT);
     await speak(shimoYomiPhrase);
-    currentPhraseIndex = -1;
+    quizCurrentPhraseIndex = -1;
 }
 
 function onCardClick(event) {
-    if (!isGameActive) return;
-    
+    if (!quizIsGameActive) return;
     const clickedCardId = parseInt(event.target.dataset.id);
-
-    if (clickedCardId === currentPoem.id) {
-        if (!answeredInRound) {
+    if (clickedCardId === quizCurrentPoem.id) {
+        if (!quizAnsweredInRound) {
             playSound(sfxCardCorrect);
-            answeredInRound = true;
-            
+            quizAnsweredInRound = true;
             let rank = '';
-            if (mistakeMadeInRound) { rank = 'E'; }
-            else if (currentPhraseIndex === -1) { rank = 'D'; }
-            else { rank = ranks[currentPhraseIndex] || 'D'; }
-            
-            rankCounts[rank]++;
-            totalScore += rankPoints[rank];
-            
+            if (quizMistakeMadeInRound) { rank = 'E'; }
+            else if (quizCurrentPhraseIndex === -1) { rank = 'D'; }
+            else { rank = ranks[quizCurrentPhraseIndex] || 'D'; }
+            quizRankCounts[rank]++;
+            quizTotalScore += rankPoints[rank];
             messageEl.textContent = `正解！ ランク: ${rank} (+${rankPoints[rank]}点)`;
-            scoreEl.textContent = totalScore;
-            
-            remainingPoems = remainingPoems.filter(p => p.id !== currentPoem.id);
-            
-            event.target.style.boxShadow = '0 0 20px #2ecc71';
+            scoreEl.textContent = quizTotalScore;
+            quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
+            event.target.classList.add('correct-card-effect');
             torifudaContainer.style.pointerEvents = 'none';
-
-            if (currentPoem.quizzes && currentPoem.quizzes.length > 0) {
-                showQuiz(currentPoem, 0);
+            if (quizCurrentPoem.quizzes && quizCurrentPoem.quizzes.length > 0) {
+                showQuiz(quizCurrentPoem, 0);
             }
         }
     } else {
-        if (!answeredInRound) {
+        if (!quizAnsweredInRound) {
             playSound(sfxQuizWrong);
             messageEl.textContent = "お手つき！";
-            mistakeMadeInRound = true;
+            quizMistakeMadeInRound = true;
             event.target.style.opacity = '0.5';
             event.target.style.pointerEvents = 'none';
         }
@@ -320,9 +336,7 @@ function onCardClick(event) {
 }
 
 function showQuiz(poem, quizIndex) {
-    if (quizIndex > 0) {
-        playSound(sfxQuizShow);
-    }
+    if (quizIndex > 0) playSound(sfxQuizShow);
     const quiz = poem.quizzes[quizIndex];
     if (!quiz) {
         quizModal.classList.add('hidden');
@@ -390,9 +404,9 @@ function checkQuizAnswer(element, selectedAnswer, poem, quizIndex) {
     if (isCorrect) {
         playSound(sfxQuizCorrect);
         element.classList.add('correct-anim');
-        totalScore += QUIZ_CORRECT_BONUS;
+        quizTotalScore += QUIZ_CORRECT_BONUS;
         quizResult.textContent = `正解！ (+${QUIZ_CORRECT_BONUS}点)`;
-        scoreEl.textContent = totalScore;
+        scoreEl.textContent = quizTotalScore;
         const nextQuizIndex = quizIndex + 1;
         if (poem.quizzes[nextQuizIndex]) {
             quizTimer = setTimeout(() => showQuiz(poem, nextQuizIndex), 1500);
@@ -407,52 +421,173 @@ function checkQuizAnswer(element, selectedAnswer, poem, quizIndex) {
     }
 }
 
-function showFinalResults() {
-    if (roundTimer) clearTimeout(roundTimer);
+function showFinalResults(mode) {
+    if (quizRoundTimer) clearTimeout(quizRoundTimer);
     gameContainer.classList.add('hidden');
     resultsContainer.classList.remove('hidden');
     window.speechSynthesis.cancel();
-    
     if (bgmAudio) {
         bgmAudio.currentTime = 0;
         bgmAudio.play();
     }
-    
     playSound(sfxResults);
     const resultsContent = document.getElementById('results-content');
+    if (mode === "quiz") {
+        let comment = '';
+        const maxRankScore = rankPoints.SS * karutaData.length;
+        const maxQuizScore = QUIZ_CORRECT_BONUS * karutaData.length * 3;
+        const maxScore = maxRankScore + maxQuizScore;
+        const perfectThreshold = maxScore * 0.95;
+        const excellentThreshold = maxScore * 0.8;
+        if (quizTotalScore >= perfectThreshold) comment = "パーフェクト！完全に極めましたね！";
+        else if (quizTotalScore >= excellentThreshold) comment = "エクセレント！素晴らしいです！";
+        else if (quizTotalScore >= 80) comment = "ワンダフル！かなりの速さです";
+        else if (quizTotalScore >= 60) comment = "コングラチュレーション！十分及第点です";
+        else if (quizTotalScore >= 30) comment = "憶えてきたね！いい感じだよ！";
+        else comment = "繰り返せば必ず憶えられるよ！ここから頑張ろう！";
+        resultsContent.innerHTML = `
+            <h1>結果発表</h1>
+            <p id="results-comment">${comment}</p>
+            <p id="total-score">総合得点: ${quizTotalScore} 点</p>
+            <table class="results-table">
+                <tr><th>ランク</th><th>回数</th></tr>
+                <tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr>
+                <tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr>
+                <tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr>
+                <tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr>
+                <tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr>
+                <tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr>
+                <tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr>
+            </table>
+            <button onclick="location.reload()">もう一度プレイ</button>
+        `;
+    }
+}
+
+
+// --- 読み上げかるた想起編 ---
+function startRecallGame() {
+    if (isBgmPlaying && bgmAudio) bgmAudio.pause();
+    startButton.style.display = 'none';
+    messageEl.textContent = " ";
+    questions = [...karutaData].sort(() => Math.random() - 0.5);
+    recallTotalScore = 0;
+    recallRankCounts = { S: 0, A: 0, B: 0, C: 0, D: 0, E: 0 };
+    scoreEl.textContent = recallTotalScore;
+    remainingCountEl.textContent = questions.length;
+    nextRecallQuestion();
+}
+
+function nextRecallQuestion() {
+    if (recallAnimationTimer) clearInterval(recallAnimationTimer);
+    if (recallRoundTimer) clearTimeout(recallRoundTimer);
+    if (questions.length === 0) {
+        showRecallResults();
+        return;
+    }
+    remainingCountEl.textContent = questions.length;
+    const correctPoem = questions[0];
+    const year = correctPoem.quizzes[0].correctAnswer;
+    const questionText = `「${year}年」はどれ？`;
+    kamiKuText.textContent = questionText;
+    shimoKuText.textContent = "";
+    speak(questionText);
+    playSound(sfxQuizShow);
+    let dummyPoems = karutaData.filter(p => p.id !== correctPoem.id);
+    shuffleArray(dummyPoems);
+    let displayPoems = [correctPoem, ...dummyPoems.slice(0, RECALL_CARDS_PER_ROUND - 1)];
+    shuffleArray(displayPoems);
+    torifudaContainer.innerHTML = '';
+    torifudaContainer.style.pointerEvents = 'auto';
+    displayPoems.forEach(poem => {
+        const cardImage = document.createElement('img');
+        cardImage.src = `images/yomi_${String(poem.id).padStart(3, '0')}-1.png`;
+        cardImage.classList.add('torifuda-card');
+        cardImage.dataset.poemId = poem.id;
+        cardImage.addEventListener('click', () => checkRecallAnswer(poem, correctPoem));
+        torifudaContainer.appendChild(cardImage);
+    });
+    recallCurrentFrame = 1;
+    recallAnimationTimer = setInterval(() => {
+        recallCurrentFrame++;
+        if (recallCurrentFrame > 5) {
+            clearInterval(recallAnimationTimer);
+            return;
+        }
+        document.querySelectorAll('.torifuda-card').forEach(card => {
+            const poemId = card.dataset.poemId;
+            if (card.style.opacity !== '0.5') {
+                card.src = `images/yomi_${String(poemId).padStart(3, '0')}-${recallCurrentFrame}.png`;
+            }
+        });
+    }, RECALL_ANIMATION_INTERVAL);
+    recallRoundTimer = setTimeout(() => {
+        if (recallAnimationTimer) clearInterval(recallAnimationTimer);
+        messageEl.textContent = "時間切れ！";
+        playSound(sfxQuizWrong);
+        recallRankCounts.E++;
+        questions.shift();
+        setTimeout(nextRecallQuestion, 2000);
+    }, RECALL_ROUND_TIMEOUT);
+}
+
+function checkRecallAnswer(clickedPoem, correctPoem) {
+    if (recallAnimationTimer) clearInterval(recallAnimationTimer);
+    if (recallRoundTimer) clearTimeout(recallRoundTimer);
+    torifudaContainer.style.pointerEvents = 'none';
+    if (clickedPoem.id === correctPoem.id) {
+        playSound(sfxCardCorrect);
+        const rank = recallRanks[recallCurrentFrame - 1] || 'D';
+        recallRankCounts[rank]++;
+        recallTotalScore += recallRankPoints[rank];
+        messageEl.textContent = `正解！ ランク: ${rank} (+${recallRankPoints[rank]}点)`;
+        scoreEl.textContent = recallTotalScore;
+        questions.shift();
+        setTimeout(nextRecallQuestion, 2000);
+    } else {
+        playSound(sfxQuizWrong);
+        messageEl.textContent = `残念！`;
+        recallRankCounts.E++;
+        questions.shift();
+        const correctCard = Array.from(torifudaContainer.children).find(img => parseInt(img.dataset.poemId) === correctPoem.id);
+        if (correctCard) {
+            correctCard.classList.add('correct-card-effect');
+        }
+        setTimeout(nextRecallQuestion, 3000);
+    }
+}
+
+function showRecallResults() {
+    if (recallAnimationTimer) clearInterval(recallAnimationTimer);
+    if (recallRoundTimer) clearTimeout(recallRoundTimer);
+    gameContainer.classList.add('hidden');
+    resultsContainer.classList.remove('hidden');
+    if (bgmAudio) {
+        bgmAudio.currentTime = 0;
+        bgmAudio.play();
+    }
+    playSound(sfxResults);
     let comment = '';
-    const maxRankScore = rankPoints.SS * karutaData.length;
-    const maxQuizScore = QUIZ_CORRECT_BONUS * karutaData.length * 3;
-    const maxScore = maxRankScore + maxQuizScore;
-    const perfectThreshold = maxScore * 0.95;
-    const excellentThreshold = maxScore * 0.8;
-    if (totalScore >= perfectThreshold) comment = "パーフェクト！完全に極めましたね！";
-    else if (totalScore >= excellentThreshold) comment = "エクセレント！素晴らしいです！";
-    else if (totalScore >= 80) comment = "ワンダフル！かなりの速さです";
-    else if (totalScore >= 60) comment = "コングラチュレーション！十分及第点です";
-    else if (totalScore >= 30) comment = "憶えてきたね！いい感じだよ！";
-    else comment = "繰り返せば必ず憶えられるよ！ここから頑張ろう！";
+    const maxScore = recallRankPoints.S * karutaData.length;
+    if (recallTotalScore >= maxScore * 0.9) comment = "達人級！驚異的な速さです！";
+    else if (recallTotalScore >= maxScore * 0.7) comment = "素晴らしい記憶力です！";
+    else if (recallTotalScore >= maxScore * 0.5) comment = "お見事！しっかり憶えていますね";
+    else if (recallTotalScore >= maxScore * 0.3) comment = "クリアおめでとうございます！";
+    else comment = "最後までお疲れ様でした！";
+    const resultsContent = document.getElementById('results-content');
     resultsContent.innerHTML = `
         <h1>結果発表</h1>
         <p id="results-comment">${comment}</p>
-        <p id="total-score">総合得点: ${totalScore} 点</p>
+        <p id="total-score">総合得点: ${recallTotalScore} 点</p>
         <table class="results-table">
             <tr><th>ランク</th><th>回数</th></tr>
-            <tr><td>SS (6点)</td><td>${rankCounts.SS} 回</td></tr>
-            <tr><td>S (5点)</td><td>${rankCounts.S} 回</td></tr>
-            <tr><td>A (4点)</td><td>${rankCounts.A} 回</td></tr>
-            <tr><td>B (3点)</td><td>${rankCounts.B} 回</td></tr>
-            <tr><td>C (2点)</td><td>${rankCounts.C} 回</td></tr>
-            <tr><td>D (1点)</td><td>${rankCounts.D} 回</td></tr>
-            <tr><td>E (0点)</td><td>${rankCounts.E} 回</td></tr>
+            <tr><td>S (5点)</td><td>${recallRankCounts.S} 回</td></tr>
+            <tr><td>A (4点)</td><td>${recallRankCounts.A} 回</td></tr>
+            <tr><td>B (3点)</td><td>${recallRankCounts.B} 回</td></tr>
+            <tr><td>C (2点)</td><td>${recallRankCounts.C} 回</td></tr>
+            <tr><td>D (1点)</td><td>${recallRankCounts.D} 回</td></tr>
+            <tr><td>E (0点)</td><td>${recallRankCounts.E} 回</td></tr>
         </table>
         <button onclick="location.reload()">もう一度プレイ</button>
     `;
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
 }

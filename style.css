@@ -51,12 +51,14 @@ body {
 
 /* 画面が「横向き」かつ「スマホサイズ（高さが500px以下）」の時の設定 */
 @media (orientation: landscape) and (max-height: 500px) {
-    /* ★★★★★ ここで大元のサイズを80%に縮小 ★★★★★ */
     html {
-        font-size: 50%; /* 1rem = 8px (基本の62.5%から約80%に) */
+        font-size: 40%;
+    }
+    .modal-content {
+        font-size: 1.25em;
     }
     #torifuda-container {
-        grid-template-columns: repeat(5, 1fr); /* 横長なので5列にする */
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
@@ -159,11 +161,9 @@ h1 {
     transition: transform 0.2s, box-shadow 0.2s;
     background-color: white;
     animation: card-appear 0.5s ease-out forwards;
-}
-
-.torifuda-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .correct-card-effect {
@@ -273,3 +273,4 @@ h1 {
 #quiz-result { font-size: 1.9rem; font-weight: bold; min-height: 2.5rem; margin-top: 2rem; }
 .correct-anim { background-color: #2ecc71 !important; color: white; }
 .incorrect-anim { background-color: #e74c3c !important; color: white; }
+
