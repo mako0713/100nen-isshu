@@ -1,4 +1,4 @@
-// script.js の全コード（ロジック分離・最終完成版）
+// script.js の全コード（ロジック分離・最終修正版）
 
 const karutaData = [
     { id: 1, kami: "後漢から/金印もらった/奴国の王", kami_yomi: "ごかんから/きんいんもらった/なこくのおう", shimo: "こんな金印/もらっていいの？", shimo_yomi: "こんなきんいん/もらっていいの", quizzes: [
@@ -66,7 +66,7 @@ const karutaData = [
         { type: "choice", question: "710年に置かれた都は？", options: ["平城京", "平安京", "長岡京", "藤原京", "難波京"], correctAnswer: "平城京" },
         { type: "choice", question: "平城京は現在の何県にある？", options: ["奈良県", "京都府", "大阪府", "滋賀県", "三重県"], correctAnswer: "奈良県" }
     ] },
-    { id: 14, kami: "「あれ？」/「 Oh No！」/古事記編纂 苦戦中", kami_yomi: "あれ？おーのう！/こじきへんさん/くせんちゅう", shimo: "なかなか息の 合わない2人", shimo_yomi: "なかなかいきの/あわないふたり", quizzes: [
+    { id: 14, kami: "「あれ？」/「 Oh No！」/古事編纂 苦戦中", kami_yomi: "あれ？おーのう！/こじきへんさん/くせんちゅう", shimo: "なかなか息の 合わない2人", shimo_yomi: "なかなかいきの/あわないふたり", quizzes: [
         { type: "numpad", question: "古事記が完成したのは何年？", correctAnswer: "712" },
         { type: "choice", question: "712年に編纂された歴史書は？", options: ["古事記", "日本書紀", "万葉集", "風土記", "続日本紀"], correctAnswer: "古事記" },
         { type: "choice", question: "古事記編纂に関わったとされる２人は誰と誰？", options: ["稗田阿礼と太安万侶", "舎人親王と藤原不比等", "柿本人麻呂と山上憶良", "聖徳太子と蘇我馬子", "天武天皇と持統天皇"], correctAnswer: "稗田阿礼と太安万侶" }
@@ -104,17 +104,17 @@ const karutaData = [
 ];
 
 // ゲーム設定
-const ROUND_DURATION = 14000;
+const ROUND_DURATION = 15000; // 読み上げ時間を考慮し20秒に延長
 const CARDS_PER_ROUND = 10;
-const RECALL_CARDS_PER_ROUND = 10;
-const RECALL_ANIMATION_INTERVAL = 3000;
-const RECALL_ROUND_TIMEOUT = 15000;
+const RANK_B_LIMIT = 1500;
 const QUIZ_CORRECT_BONUS = 1;
-
 const ranks = ['SS', 'S', 'A', 'B', 'C'];
 const rankPoints = { SS: 6, S: 5, A: 4, B: 3, C: 2, D: 1, E: 0 };
 const recallRanks = ['S', 'A', 'B', 'C', 'D'];
 const recallRankPoints = { S: 5, A: 4, B: 3, C: 2, D: 1, E: 0 };
+const RECALL_CARDS_PER_ROUND = 10;
+const RECALL_ANIMATION_INTERVAL = 3000;
+const RECALL_ROUND_TIMEOUT = 15000;
 
 // HTMLの要素を取得
 const selectionContainer = document.getElementById('selection-container');
@@ -143,7 +143,6 @@ const sfxResults = document.getElementById('sfx-results');
 // ゲームの状態を管理する変数
 let speechQueue = [];
 let isBgmPlaying = false;
-
 // 早押しクイズ編用の変数
 let quizCurrentPoem = null;
 let quizRemainingPoems = [];
@@ -155,7 +154,6 @@ let quizCurrentPhraseIndex = 0;
 let quizMistakeMadeInRound = false;
 let quizTimer = null;
 let quizRoundTimer = null;
-
 // 想起編用の変数
 let recallQuestions = [];
 let recallTotalScore = 0;
@@ -163,7 +161,6 @@ let recallRankCounts = { S: 0, A: 0, B: 0, C: 0, D: 0, E: 0 };
 let recallAnimationTimer = null;
 let recallRoundTimer = null;
 let recallCurrentFrame = 1;
-
 
 // --- イベントリスナー ---
 startQuizGameBtn.addEventListener('click', () => {
@@ -175,9 +172,7 @@ startQuizGameBtn.addEventListener('click', () => {
         isBgmPlaying = true;
     }
 });
-
 startButton.addEventListener('click', () => startGame(true));
-
 startReadingGameBtn.addEventListener('click', () => {
     selectionContainer.classList.add('hidden');
     gameContainer.classList.remove('hidden');
@@ -192,7 +187,6 @@ function playSound(audioElement) {
         audioElement.play();
     }
 }
-
 function speak(text) {
     return new Promise((resolve) => {
         if ('speechSynthesis' in window) {
@@ -217,14 +211,12 @@ function speak(text) {
         }
     });
 }
-
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
 
 // --- 早押しかるたクイズ編 ---
 function startGame(isFirstRound = false) {
@@ -277,8 +269,8 @@ function handleTimeout() {
         messageEl.textContent = "時間切れ！";
         quizRankCounts.E++;
         quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
+        startGame();
     }
-    startGame();
 }
 
 async function readPoem() {
@@ -307,6 +299,7 @@ function onCardClick(event) {
     const clickedCardId = parseInt(event.target.dataset.id);
     if (clickedCardId === quizCurrentPoem.id) {
         if (!quizAnsweredInRound) {
+            if (quizRoundTimer) clearTimeout(quizRoundTimer);
             playSound(sfxCardCorrect);
             quizAnsweredInRound = true;
             let rank = '';
@@ -340,6 +333,7 @@ function showQuiz(poem, quizIndex) {
     const quiz = poem.quizzes[quizIndex];
     if (!quiz) {
         quizModal.classList.add('hidden');
+        proceedToNextRound();
         return;
     }
     quizQuestion.textContent = `【第${quizIndex + 1}問】 ${quiz.question}`;
@@ -411,25 +405,35 @@ function checkQuizAnswer(element, selectedAnswer, poem, quizIndex) {
         if (poem.quizzes[nextQuizIndex]) {
             quizTimer = setTimeout(() => showQuiz(poem, nextQuizIndex), 1500);
         } else {
-            quizTimer = setTimeout(() => quizModal.classList.add('hidden'), 1500);
+            quizTimer = setTimeout(() => {
+                quizModal.classList.add('hidden');
+                proceedToNextRound();
+            }, 1500);
         }
     } else {
         playSound(sfxQuizWrong);
         element.classList.add('incorrect-anim');
         quizResult.textContent = `残念！正解は「${quiz.correctAnswer}」`;
-        quizTimer = setTimeout(() => quizModal.classList.add('hidden'), 2000);
+        quizTimer = setTimeout(() => {
+            quizModal.classList.add('hidden');
+            proceedToNextRound();
+        }, 2000);
     }
+}
+
+function proceedToNextRound() {
+    setTimeout(startGame, 1000);
 }
 
 function showFinalResults(mode) {
     if (quizRoundTimer) clearTimeout(quizRoundTimer);
-    gameContainer.classList.add('hidden');
-    resultsContainer.classList.remove('hidden');
-    window.speechSynthesis.cancel();
     if (bgmAudio) {
         bgmAudio.currentTime = 0;
         bgmAudio.play();
     }
+    gameContainer.classList.add('hidden');
+    resultsContainer.classList.remove('hidden');
+    window.speechSynthesis.cancel();
     playSound(sfxResults);
     const resultsContent = document.getElementById('results-content');
     if (mode === "quiz") {
@@ -445,25 +449,9 @@ function showFinalResults(mode) {
         else if (quizTotalScore >= 60) comment = "コングラチュレーション！十分及第点です";
         else if (quizTotalScore >= 30) comment = "憶えてきたね！いい感じだよ！";
         else comment = "繰り返せば必ず憶えられるよ！ここから頑張ろう！";
-        resultsContent.innerHTML = `
-            <h1>結果発表</h1>
-            <p id="results-comment">${comment}</p>
-            <p id="total-score">総合得点: ${quizTotalScore} 点</p>
-            <table class="results-table">
-                <tr><th>ランク</th><th>回数</th></tr>
-                <tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr>
-                <tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr>
-                <tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr>
-                <tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr>
-                <tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr>
-                <tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr>
-                <tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr>
-            </table>
-            <button onclick="location.reload()">もう一度プレイ</button>
-        `;
+        resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">${comment}</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><button onclick="location.reload()">もう一度プレイ</button>`;
     }
 }
-
 
 // --- 読み上げかるた想起編 ---
 function startRecallGame() {
@@ -526,6 +514,7 @@ function nextRecallQuestion() {
         messageEl.textContent = "時間切れ！";
         playSound(sfxQuizWrong);
         recallRankCounts.E++;
+        scoreEl.textContent = recallTotalScore;
         questions.shift();
         setTimeout(nextRecallQuestion, 2000);
     }, RECALL_ROUND_TIMEOUT);
@@ -548,6 +537,7 @@ function checkRecallAnswer(clickedPoem, correctPoem) {
         playSound(sfxQuizWrong);
         messageEl.textContent = `残念！`;
         recallRankCounts.E++;
+        scoreEl.textContent = recallTotalScore;
         questions.shift();
         const correctCard = Array.from(torifudaContainer.children).find(img => parseInt(img.dataset.poemId) === correctPoem.id);
         if (correctCard) {
