@@ -274,3 +274,33 @@ h1 {
 .correct-anim { background-color: #2ecc71 !important; color: white; }
 .incorrect-anim { background-color: #e74c3c !important; color: white; }
 
+/* 復習エリアのスタイル */
+.review-area {
+    margin-top: 2rem;
+    text-align: left;
+    max-height: 200px; /* 高さを制限してスクロール可能に */
+    overflow-y: auto; /* 縦方向にスクロール */
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 5px;
+}
+.review-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+}
+.review-item:last-child {
+    border-bottom: none;
+}
+.review-poem {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 0 0 0.5rem 0;
+}
+.review-reason, .review-correct-answer, .review-hint {
+    margin: 0;
+    padding-left: 1em;
+    font-size: 1em;
+}
+.review-correct-answer, .review-hint {
+    color: #e74c3c; /* 赤色で強調 */
+}

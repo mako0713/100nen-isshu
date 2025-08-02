@@ -104,7 +104,7 @@ const karutaData = [
 ];
 
 // ゲーム設定
-const ROUND_DURATION = 15000; // 読み上げ時間を考慮し20秒に延長
+const ROUND_DURATION = 15000; 
 const CARDS_PER_ROUND = 10;
 const RANK_B_LIMIT = 1500;
 const QUIZ_CORRECT_BONUS = 1;
@@ -261,16 +261,27 @@ function startGame(isFirstRound = false) {
         torifudaContainer.appendChild(cardImage);
     });
     readPoem();
-    quizRoundTimer = setTimeout(handleTimeout, ROUND_DURATION);
+    quizRoundTimer = setTimeout(forceNextRound, ROUND_DURATION);
 }
 
-function handleTimeout() {
+function forceNextRound() {
+    // 進行中のタイマーや音声を全て停止・リセット
+    if (quizTimer) clearTimeout(quizTimer);
+    window.speechSynthesis.cancel();
+    speechQueue = [];
+    quizModal.classList.add('hidden');
+
+    // タイムアップ時点でまだ札が取られていなかった場合のみ、ペナルティを与える
     if (!quizAnsweredInRound) {
         messageEl.textContent = "時間切れ！";
-        quizRankCounts.E++;
+        quizRankCounts.E++; // ランクEを加算
         quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
-        startGame();
     }
+    
+    // 次のラウンドを開始
+    // 札を取った後、クイズの途中で時間切れになった場合は、
+    // そのまま次のラウンドへ移行します。
+    proceedToNextRound();
 }
 
 async function readPoem() {
@@ -299,7 +310,6 @@ function onCardClick(event) {
     const clickedCardId = parseInt(event.target.dataset.id);
     if (clickedCardId === quizCurrentPoem.id) {
         if (!quizAnsweredInRound) {
-            if (quizRoundTimer) clearTimeout(quizRoundTimer);
             playSound(sfxCardCorrect);
             quizAnsweredInRound = true;
             let rank = '';
@@ -422,6 +432,7 @@ function checkQuizAnswer(element, selectedAnswer, poem, quizIndex) {
 }
 
 function proceedToNextRound() {
+    if (quizRoundTimer) clearTimeout(quizRoundTimer); // この行を追加
     setTimeout(startGame, 1000);
 }
 
