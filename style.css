@@ -141,7 +141,7 @@ h1 {
 }
 
 #shimo-ku-text {
-    padding-left: 6em; 
+    padding-left: 6em;
 }
 
 #torifuda-container {
@@ -219,6 +219,7 @@ h1 {
     justify-content: center;
     align-items: center;
     z-index: 200;
+    overflow-y: auto; /* Allow scrolling on the backdrop */
 }
 
 #results-content {
@@ -226,9 +227,10 @@ h1 {
     padding: 3rem 4rem;
     border-radius: 1rem;
     width: 90%;
-    max-width: 50rem;
+    max-width: 60rem; /* Increased width for review */
     text-align: center;
     box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.3);
+    margin: 5rem auto; /* Add margin for scrolling */
 }
 
 #results-content h1 { font-size: 3.2rem; color: #333; margin-bottom: 2rem; }
@@ -276,31 +278,44 @@ h1 {
 
 /* 復習エリアのスタイル */
 .review-area {
-    margin-top: 2rem;
+    margin-top: 3rem;
     text-align: left;
-    max-height: 200px; /* 高さを制限してスクロール可能に */
-    overflow-y: auto; /* 縦方向にスクロール */
     border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 5px;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    background-color: #fdfdfd;
+}
+.review-area h2 {
+    font-size: 2.2rem;
+    color: #007bff;
+    margin-top: 0;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 .review-item {
     border-bottom: 1px solid #eee;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
 }
 .review-item:last-child {
     border-bottom: none;
 }
-.review-poem {
+.review-poem, .review-question {
     font-weight: bold;
-    font-size: 1.1em;
-    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+    margin: 0 0 0.8rem 0;
 }
 .review-reason, .review-correct-answer, .review-hint {
-    margin: 0;
-    padding-left: 1em;
-    font-size: 1em;
+    margin: 0.5rem 0 0.5rem 1.5rem;
+    font-size: 1.6rem;
 }
-.review-correct-answer, .review-hint {
-    color: #e74c3c; /* 赤色で強調 */
+.review-correct-answer {
+     color: #e74c3c;
+     font-weight: bold;
+}
+.review-hint {
+    color: #333;
+    background-color: #eef7ff;
+    padding: 1rem;
+    border-radius: 0.5rem;
 }
