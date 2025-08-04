@@ -326,3 +326,26 @@ h1 {
     padding: 1rem;
     border-radius: 0.5rem;
 }
+/* クレジット表示用のスタイル */
+#credit-container {
+    margin-top: 4rem;
+    font-size: 1.4rem;
+    color: #555;
+}
+
+#credit-container p {
+    margin: 0.5rem 0;
+}
+
+#credit-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#credit-container a:hover {
+    text-decoration: underline;
+}
+
+.credit-title {
+    font-weight: bold;
+}
