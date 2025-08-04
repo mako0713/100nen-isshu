@@ -2,11 +2,7 @@ const karutaData = [
     { id: 1, kami: "後漢から/金印もらった/奴国の王", kami_yomi: "ごかんから/きんいんもらった/なこくのおう", shimo: "こんな金印/もらっていいの？", shimo_yomi: "こんなきんいん/もらっていいの", quizzes: [
         { type: "numpad", question: "奴国の王が後漢から金印をもらったのは何年？", correctAnswer: "57", mnemonic_word: "こんな", hint: "下の句の「こんな(57)金印」が「57年」を表しているよ！" },
         { type: "choice", question: "奴国の王が使いを送った国はどこ？", options: ["後漢", "前漢", "新", "隋", "唐"], correctAnswer: "後漢", hint: "歌の始まりが「後漢から金印もらった…」だったね！" },
-<<<<<<< HEAD
         { type: "choice", question: "金印が発見された場所は？", options: ["志賀島(福岡県)", "江田船山古墳(熊本県)", "壱岐(長崎県)", "対馬(長崎県)", "平城京跡(奈良県)"], correctAnswer: "志賀島(福岡県)", hint: "金印は福岡県の「志賀島」で発見されたんだ。志賀島には金印公園もあるし、金印海道もあるよ！場所もセットで憶えよう！" }
-=======
-        { type: "choice", question: "金印が発見された場所は？", options: ["志賀島(福岡県)", "江田船山古墳(熊本県)", "壱岐(長崎県)", "対馬(長崎県)", "平城京跡(奈良県)"], correctAnswer: "志賀島(福岡県)", hint: "金印は福岡県の「志賀島」で発見されたんだ。場所もセットで憶えよう！" }
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
     ] },
     { id: 2, kami: "親魏倭王/女王卑弥呼の/不思議な力", kami_yomi: "しんぎわおう/じょおうひみこの/ふしぎなちから", shimo: "不作知らずの 邪馬台国", shimo_yomi: "ふさくしらずの/やまたいこく", quizzes: [
         { type: "numpad", question: "卑弥呼が魏に遣使したのは何年？", correctAnswer: "239", mnemonic_word: "不作", hint: "下の句の「不作(239)知らずの」が「239年」を表しているよ！" },
@@ -16,7 +12,6 @@ const karutaData = [
     { id: 3, kami: "朝貢し/宋に上表/「打倒・高句麗」", kami_yomi: "ちょうこうし/そうにじょうひょう/だとうこうくり", shimo: "武の得た品は くだらないもの", shimo_yomi: "ぶのえたしなは/くだらないもの", quizzes: [
         { type: "numpad", question: "倭王武が南朝の宋に遣使したのは何年？", correctAnswer: "478", mnemonic_word: "品は", hint: "下の句の「品は(しなは→478)」が「478年」を表しているよ！" },
         { type: "choice", question: "武が上表文で言及した、朝貢を邪魔する国は？", options: ["高句麗", "新羅", "百済", "伽耶", "隋"], correctAnswer: "高句麗", hint: "歌の「打倒・高句麗」の部分を思い出そう！" },
-<<<<<<< HEAD
         { type: "choice", question: "次のうち、武が軍事権の称号を得られなかった国は？", options: ["百済", "新羅", "加羅", "秦韓", "任那"], correctAnswer: "百済", hint: "倭王武は百済を含む朝鮮半島の軍事権を要求したんだ。でも、百済だけは認められなかった。歌の「くだらないもの」は「百済無いもの」というわけ。" }
     ] },
     { id: 4, kami: "くだらない？/仏像めぐって/争う両氏", kami_yomi: "くだらない/ぶつぞうめぐって/あらそうりょうし", shimo: "ゴミ屋に出すの？ここに置くの？", shimo_yomi: "ごみやにだすの？/ここにおくの？", quizzes: [
@@ -28,19 +23,6 @@ const karutaData = [
         { type: "numpad", question: "十七条の憲法が制定されたのは何年？", correctAnswer: "604", mnemonic_word: "群れよる", hint: "下の句の「群れよる(604)部下」が「604年」を表しているよ！群れ寄る「民」ではなく、「部下(＝役人)」の方がいいね" },
         { type: "choice", question: "十七条の憲法を制定した人物は？", options: ["聖徳太子", "推古天皇", "蘇我馬子", "用明天皇", "中大兄皇子"], correctAnswer: "聖徳太子", hint: "歌に「聖徳太子」って入っているね！" },
         { type: "choice", question: "聖徳太子は、誰の摂政だったか？", options: ["推古天皇", "崇峻天皇", "用明天皇", "欽明天皇", "敏達天皇"], correctAnswer: "推古天皇", hint: "日本初の女性天皇、推古天皇の摂政として聖徳太子は活躍したんだ。" }
-=======
-        { type: "choice", question: "次のうち、武が軍事権の称号を得られなかった国は？", options: ["百済", "新羅", "加羅", "秦韓", "任那"], correctAnswer: "百済", hint: "倭王武は百済を含む朝鮮半島の軍事権を要求したんだ。でも、百済は認められなかった。歌の「くだらないもの」は「百済ないもの」、というわけ。" }
-    ] },
-    { id: 4, kami: "くだらない？/仏像めぐって/争う両氏", kami_yomi: "くだらない/ぶつぞうめぐって/あらそうりょうし", shimo: "ゴミ屋に出すの？ここに置くの？", shimo_yomi: "ごみやにだすの？/ここにおくの？", quizzes: [
-        { type: "numpad", question: "仏教公伝の年は538年説と何年説がある？", correctAnswer: "552", mnemonic_word: "ここに", hint: "下の句の「ここに(552)置くの？」が552年説を表しているよ。「ゴミ屋(538)」は538年説だね。" },
-        { type: "choice", question: "６世紀半ば、日本に仏像と経典をおくった国は？", options: ["百済", "新羅", "高句麗", "伽耶", "中国"], correctAnswer: "百済", hint: "歌の「くだらない？」は「百済」を想起するためのフレーズだよ。" },
-        { type: "choice", question: "仏教の扱いをめぐって争った豪族の組み合わせで正しいものは？", options: ["蘇我氏と物部氏", "中臣氏と蘇我氏", "大伴氏と物部氏", "蘇我氏と紀氏", "物部氏と平群氏"], correctAnswer: "蘇我氏と物部氏", hint: "崇仏派の蘇我氏と、排仏派の物部氏が争ったんだ。" }
-    ] },
-    { id: 5, kami: "役人の/心構え説く/聖徳太子", kami_yomi: "やくにんの/こころがまえとく/しょうとくたいし", shimo: "群れよる部下に 17条", shimo_yomi: "むれよるぶかに/じゅうななじょう", quizzes: [
-        { type: "numpad", question: "十七条の憲法が制定されたのは何年？", correctAnswer: "604", mnemonic_word: "群れよる", hint: "下の句の「群れよる(604)」が「604年」を表しているよ！" },
-        { type: "choice", question: "十七条の憲法を制定した人物は？", options: ["聖徳太子", "推古天皇", "蘇我馬子", "用明天皇", "中大兄皇子"], correctAnswer: "聖徳太子", hint: "歌に「聖徳太子」って入っているね！" },
-        { type: "choice", question: "聖徳太子は、誰の摂政だったか？", options: ["推古天皇", "崇峻天皇", "用明天皇", "欽明天皇", "敏達天皇"], correctAnswer: "推古天皇", hint: "日本初の女性天皇、推古天皇の摂政として活躍したんだ。" }
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
     ] },
     { id: 6, kami: "怒り買う/「日出ずる処の天子」の/記述", kami_yomi: "いかりかう/ひいずるところの/てんしのきじゅつ", shimo: "無礼な国書の 遣隋使", shimo_yomi: "ぶれいなこくしょの/けんずいし", quizzes: [
         { type: "numpad", question: "遣隋使を派遣したのは何年？", correctAnswer: "607", mnemonic_word: "無礼な", hint: "下の句の「無礼な(607)」国書が「607年」を表しているよ！" },
@@ -48,11 +30,7 @@ const karutaData = [
         { type: "choice", question: "国書に対して不機嫌になったという隋の皇帝は誰？", options: ["煬帝", "文帝", "高祖", "太宗", "煬堅"], correctAnswer: "煬帝", hint: "歌の「怒り買う」の相手が、隋の2代目皇帝「煬帝」だね。" }
     ] },
     { id: 7, kami: "ロミオじゃない/残念ながら/御田鍬は", kami_yomi: "ろみおじゃない/ざんねんながら/みたすきは", shimo: "むさいオッサン 遣唐使！", shimo_yomi: "むさいおっさん/けんとうし", quizzes: [
-<<<<<<< HEAD
         { type: "numpad", question: "遣唐使が派遣されたのは何年？", correctAnswer: "630", mnemonic_word: "むさい", hint: "下の句の「むさいオッサン(630)」が「630年」を表しているよ！あとは、実はロミオ(630)もね" },
-=======
-        { type: "numpad", question: "遣唐使が派遣されたのは何年？", correctAnswer: "630", mnemonic_word: "むさい", hint: "下の句の「むさい(630)」が「630年」を表しているよ！" },
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         { type: "choice", question: "630年から894年に廃止されるまでの間、大陸の文化を学びに派遣された使者を何という？", options: ["遣唐使", "遣隋使", "遣明使", "遣新羅使", "朝貢使"], correctAnswer: "遣唐使", hint: "歌の最後に「遣唐使！」とあるね！" },
         { type: "choice", question: "第一回遣唐使として送られた使者は誰か？", options: ["犬上御田鍬", "小野妹子", "高向玄理", "阿倍仲麻呂", "吉備真備"], correctAnswer: "犬上御田鍬", hint: "歌の「御田鍬(みたすき)」がヒントだよ！" }
     ] },
@@ -67,12 +45,8 @@ const karutaData = [
         { type: "choice", question: "白村江の戦いで日本が戦った連合軍はどの国とどの国？", options: ["唐と新羅", "百済と高句麗", "隋と高句麗", "呉と蜀", "新羅と百済"], correctAnswer: "唐と新羅", hint: "下の句に「唐と新羅が相手」とあるね！" }
     ] },
     { id: 10, kami: "跡継ぎを/巡る乱見て/人心染まる", kami_yomi: "あとつぎを/めぐるらんみて/じんしんそまる", shimo: "「【海】・【友】ろくな 2人じゃない」と", shimo_yomi: "うみともろくな/ふたりじゃないと", quizzes: [
-        { type: "numpad", question: "壬申の乱は何年？", correctAnswer: "672", mnemonic_word: "ろくな二人", hint: "下の句の「ろくな(67)二人(2)」が「672年」を表しているよ！" },
-<<<<<<< HEAD
+        { type: "numpad", question: "壬申の乱は何年？", correctAnswer: "672", mnemonic_word: "ろくな二人", hint: "下の句の「ろくな二(672)人」が「672年」を表しているよ！" },
         { type: "choice", question: "672年に起こった、天智天皇の跡継ぎ争いは？", options: ["壬申の乱", "承久の乱", "保元の乱", "平治の乱", "応仁の乱"], correctAnswer: "壬申の乱", hint: "「人心(じんしん)」がヒントになってるよ。天智天皇の死後の跡継ぎ争いだよ。" },
-=======
-        { type: "choice", question: "672年に起こった、天智天皇の跡継ぎ争いは？", options: ["壬申の乱", "承久の乱", "保元の乱", "平治の乱", "応仁の乱"], correctAnswer: "壬申の乱", hint: "「人心(じんしん)」が壬申の乱のヒント。天智天皇の死後の跡継ぎ争いだよ。" },
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         { type: "choice", question: "壬申の乱に勝利し、即位後に天武天皇となる人物は？", options: ["大海人皇子", "大友皇子", "中大兄皇子", "有間皇子", "蘇我入鹿"], correctAnswer: "大海人皇子", hint: "下の句の【海】は大海人皇子、【友】は大友皇子を表しているんだ。" }
     ] },
     { id: 11, kami: "大宝の/唐から学んだ/律令制は", kami_yomi: "たいほうの/とうからまなんだ/りつりょうせいは", shimo: "日本でなおいい 大きな宝", shimo_yomi: "にほんでなおいい/おおきなたから", quizzes: [
@@ -93,11 +67,7 @@ const karutaData = [
     { id: 14, kami: "「あれ？」/「 Oh No！」/古事編纂 苦戦中", kami_yomi: "あれ？おーのう！/こじきへんさん/くせんちゅう", shimo: "なかなか息の 合わない2人", shimo_yomi: "なかなかいきの/あわないふたり", quizzes: [
         { type: "numpad", question: "古事記が完成したのは何年？", correctAnswer: "712", mnemonic_word: "（息の合わ）ない二人", hint: "下の句の「（息の合わ）ない二人(712)」が「712年」を表しているよ！" },
         { type: "choice", question: "712年に編纂された歴史書は？", options: ["古事記", "日本書紀", "万葉集", "風土記", "続日本紀"], correctAnswer: "古事記", hint: "歌に「古事記編纂」とあるね！" },
-<<<<<<< HEAD
         { type: "choice", question: "古事記編纂に関わったとされる２人は誰と誰？", options: ["稗田阿礼と太安万侶", "舎人親王と藤原不比等", "柿本人麻呂と山上憶良", "聖徳太子と蘇我馬子", "天武天皇と持統天皇"], correctAnswer: "稗田阿礼と太安万侶", hint: "歌の「あれ？」「Oh No!(オーノー)」は稗田阿礼(ひえだのあれ)と太安万侶(おおのやすまろ)を表しているんだ。" }
-=======
-        { type: "choice", question: "古事記編纂に関わったとされる２人は誰と誰？", options: ["稗田阿礼と太安万侶", "舎人親王と藤原不比等", "柿本人麻呂と山上憶良", "聖徳太子と蘇我馬子", "天武天皇と持統天皇"], correctAnswer: "稗田阿礼と太安万侶", hint: "歌の「あれ？」「Oh No!(オーノー)」は稗田阿礼と太安万侶を表しているんだ。" }
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
     ] },
     { id: 15, kami: "新しく/開墾した土地/永年私財", kami_yomi: "あたらしく/かいこんしたとち/えいねんしざい", shimo: "返す必要 もうなしさ", shimo_yomi: "かえすひつよう/もうなしさ", quizzes: [
         { type: "numpad", question: "墾田永年私財法が出されたのは何年？", correctAnswer: "743", mnemonic_word: "なしさ", hint: "下の句の「なしさ(743)」が「743年」を表しているよ！" },
@@ -115,29 +85,17 @@ const karutaData = [
         { type: "choice", question: "蝦夷討伐に際し、坂上田村麻呂に与えられていた役職は？", options: ["征夷大将軍", "鎮守府将軍", "関白", "太政大臣", "大納言"], correctAnswer: "征夷大将軍", hint: "歌に「征夷大将軍は」とあるね！" }
     ] },
     { id: 18, kami: "内乱で/衰えし唐に/道真は", kami_yomi: "ないらんで/おとろえしとうに/みちざねは", shimo: "白紙に戻せ 遣唐使", shimo_yomi: "はくしにもどせ/けんとうし", quizzes: [
-<<<<<<< HEAD
         { type: "numpad", question: "遣唐使が廃止されたのは何年？", correctAnswer: "894", mnemonic_word: "白紙", hint: "下の句の「白紙(894)に戻せ」が「894年」を表しているよ！" },
-=======
-        { type: "numpad", question: "遣唐使が廃止されたのは何年？", correctAnswer: "894", mnemonic_word: "白紙", hint: "下の句の「白紙に(894)戻せ」が「894年」を表しているよ！" },
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         { type: "choice", question: "894年に何が廃止された？", options: ["遣唐使", "遣隋使", "勘合貿易", "朱印船貿易", "日宋貿易"], correctAnswer: "遣唐使", hint: "下の句に「遣唐使」とあるね！" },
         { type: "choice", question: "894年に遣唐使を廃止したのは誰？", options: ["菅原道真", "藤原時平", "宇多天皇", "最澄", "円仁"], correctAnswer: "菅原道真", hint: "歌に「道真は」とあるのが菅原道真のことだよ。" }
     ] },
     { id: 19, kami: "関東の/各地に残る/首塚伝承", kami_yomi: "かんとうの/かくちにのこる/くびづかでんしょう", shimo: "平将門 首三個？", shimo_yomi: "たいらのまさかど/くびさんこ？", quizzes: [
-<<<<<<< HEAD
         { type: "numpad", question: "平将門の乱は何年？", correctAnswer: "935", mnemonic_word: "首三個", hint: "下の句の「首三個(くびさんこ)」が「935年」を表しているよ！首塚は東京・大手町が有名だけど、例えば埼玉・幸手(さって)にもあるんだ。「飛び去って(幸手)行った 首三個？」にしようか、大いに悩みました" },
-=======
-        { type: "numpad", question: "平将門の乱は何年？", correctAnswer: "935", mnemonic_word: "首三個", hint: "下の句の「首三個(くびさんこ→935)」が「935年」を表しているよ！" },
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         { type: "choice", question: "935年に乱を起こしたのは誰？", options: ["平将門", "藤原純友", "藤原道長", "源頼朝", "平清盛"], correctAnswer: "平将門", hint: "下の句に「平将門」とあるね！" },
         { type: "choice", question: "平将門の乱はどこで起こった？", options: ["関東地方", "東北地方", "瀬戸内海", "京都", "九州"], correctAnswer: "関東地方", hint: "歌の「関東の」がヒントだよ！" }
     ] },
     { id: 20, kami: "この世には/欠けぬ望月/などはなく", kami_yomi: "このよには/かけぬもちづき/などはなく", shimo: "遠いむかしさ 道長の世も", shimo_yomi: "とおいむかしさ/みちながのよも", quizzes: [
-<<<<<<< HEAD
         { type: "numpad", question: "藤原道長が摂政になったのは何年？", correctAnswer: "1016", mnemonic_word: "遠い昔", hint: "下の句の「遠いむ(1016)かしさ」が「1016年」を表しているよ！" },
-=======
-        { type: "numpad", question: "藤原道長が摂政になったのは何年？", correctAnswer: "1016", mnemonic_word: "遠い昔", hint: "下の句の「遠(10)い(1)昔(6)さ」が「1016年」を表しているよ！" },
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         { type: "choice", question: "「この世をば…」という歌を詠んだのは誰か？", options: ["藤原道長", "藤原頼通", "藤原実資", "清少納言", "紫式部"], correctAnswer: "藤原道長", hint: "下の句に「道長の世も」とあるね！" },
         { type: "choice", question: "1016年、藤原道長は何の役職に就任したか？", options: ["摂政", "関白", "太政大臣", "内覧", "征夷大将軍"], correctAnswer: "摂政", hint: "娘たちを次々と天皇の后にし、摂政として権力を握ったんだ。" }
     ] }
@@ -310,14 +268,15 @@ function startGame(isFirstRound = false) {
 }
 
 function forceNextRound() {
+    // 進行中のタイマーや音声を全て停止・リセット
     if (quizTimer) clearTimeout(quizTimer);
     window.speechSynthesis.cancel();
     speechQueue = [];
     quizModal.classList.add('hidden');
 
+    // タイムアップ時点でまだ札が取られていなかった場合のみ、ペナルティを与える
     if (!quizAnsweredInRound) {
         messageEl.textContent = "時間切れ！";
-<<<<<<< HEAD
         quizRankCounts.E++; // ランクEを加算
         quizMistakes.push({ poem: quizCurrentPoem, reason: '時間切れ' });
         quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
@@ -326,12 +285,6 @@ function forceNextRound() {
     // 次のラウンドを開始
     // 札を取った後、クイズの途中で時間切れになった場合も、
     // この関数が呼ばれて次のラウンドへ移行します。
-=======
-        quizRankCounts.E++;
-        quizMistakes.push({ poem: quizCurrentPoem, reason: '時間切れ' });
-        quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
-    }
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
     proceedToNextRound();
 }
 
@@ -343,22 +296,14 @@ async function readPoem() {
     kamiKuText.textContent = ' ';
     shimoKuText.textContent = ' ';
     for (let i = 0; i < kamiPhrases.length; i++) {
-<<<<<<< HEAD
         if (quizAnsweredInRound) return; // 札が取られたらループを抜ける
-=======
-        if (!quizIsGameActive) return;
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         quizCurrentPhraseIndex = i;
         kamiKuText.textContent += kamiPhrases[i] + ' ';
         await speak(kamiYomiPhrases[i]);
     }
-<<<<<<< HEAD
 
     if (quizAnsweredInRound) return; // 下の句を読む前にもチェック
 
-=======
-    if (!quizIsGameActive) return;
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
     quizCurrentPhraseIndex = 3;
     shimoKuText.textContent = shimoPhrase;
     setTimeout(() => {
@@ -374,12 +319,8 @@ function onCardClick(event) {
     if (clickedCardId === quizCurrentPoem.id) {
         playSound(sfxCardCorrect);
         quizAnsweredInRound = true;
-<<<<<<< HEAD
         window.speechSynthesis.cancel(); // 読み上げを即座に停止
         
-=======
-        window.speechSynthesis.cancel(); // Stop reading
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         let rank = '';
         if (quizMistakeMadeInRound) {
             rank = 'E';
@@ -393,7 +334,6 @@ function onCardClick(event) {
         quizTotalScore += rankPoints[rank];
         messageEl.textContent = `正解！ ランク: ${rank} (+${rankPoints[rank]}点)`;
         scoreEl.textContent = quizTotalScore;
-<<<<<<< HEAD
         
         quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
         event.target.classList.add('correct-card-effect');
@@ -402,22 +342,17 @@ function onCardClick(event) {
         if (quizCurrentPoem.quizzes && quizCurrentPoem.quizzes.length > 0) {
             // 少し待ってからクイズを表示（読み上げ停止の反映を待つため）
             setTimeout(() => showQuiz(quizCurrentPoem, 0), 100);
-=======
-        quizRemainingPoems = quizRemainingPoems.filter(p => p.id !== quizCurrentPoem.id);
-        event.target.classList.add('correct-card-effect');
-        torifudaContainer.style.pointerEvents = 'none';
-        if (quizCurrentPoem.quizzes && quizCurrentPoem.quizzes.length > 0) {
-            showQuiz(quizCurrentPoem, 0);
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
         } else {
             proceedToNextRound();
         }
     } else {
-        playSound(sfxQuizWrong);
-        messageEl.textContent = "お手つき！";
-        quizMistakeMadeInRound = true;
-        event.target.style.opacity = '0.5';
-        event.target.style.pointerEvents = 'none';
+        if (!quizAnsweredInRound) {
+            playSound(sfxQuizWrong);
+            messageEl.textContent = "お手つき！";
+            quizMistakeMadeInRound = true;
+            event.target.style.opacity = '0.5';
+            event.target.style.pointerEvents = 'none';
+        }
     }
 }
 
@@ -513,14 +448,8 @@ function checkQuizAnswer(element, selectedAnswer, poem, quizIndex) {
 }
 
 function proceedToNextRound() {
-<<<<<<< HEAD
     if (quizRoundTimer) clearTimeout(quizRoundTimer);
     setTimeout(startGame, 1000);
-=======
-    quizIsGameActive = false;
-    if (quizRoundTimer) clearTimeout(quizRoundTimer);
-    setTimeout(() => startGame(), 1000);
->>>>>>> a13ab587ec2ca699faf2a28c5313ff349f0a960f
 }
 
 function showFinalResults(mode) {
