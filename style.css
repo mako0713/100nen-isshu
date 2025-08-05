@@ -10,7 +10,7 @@ html {
 body {
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
-    background-image: url('images/background.jpg');
+    background-image: url('images/title_background.jpg'); /* ここを変更 */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
