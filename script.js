@@ -10,7 +10,7 @@ const karutaData = [
         { type: "choice", question: "卑弥呼に授けられた称号は？", options: ["親魏倭王", "漢委奴国王", "安東大将軍倭王", "倭国大王", "邪馬台国王"], correctAnswer: "親魏倭王", hint: "歌の始まりが「親魏倭王、女王卑弥呼の…」だったね！" }
     ] },
     { id: 3, kami: "朝貢し/宋に上表/「打倒・高句麗」", kami_yomi: "ちょうこうし/そうにじょうひょう/だとうこうくり", shimo: "武の得た品は くだらないもの", shimo_yomi: "ぶのえたしなは/くだらないもの", quizzes: [
-        { type: "numpad", question: "倭王武が南朝の宋に遣使したのは何年？", correctAnswer: "478", mnemonic_word: "品は", hint: "下の句の「品は(しなは→478)」が「478年」を表しているよ！" },
+        { type: "numpad", question: "倭王武が南朝の宋に遣使したのは何年？", correctAnswer: "478", mnemonic_word: "品は", hint: "下の句の「品は(しなは」が「478年」を表しているよ！" },
         { type: "choice", question: "武が上表文で言及した、朝貢を邪魔する国は？", options: ["高句麗", "新羅", "百済", "伽耶", "隋"], correctAnswer: "高句麗", hint: "歌の「打倒・高句麗」の部分を思い出そう！" },
         { type: "choice", question: "次のうち、武が軍事権の称号を得られなかった国は？", options: ["百済", "新羅", "加羅", "秦韓", "任那"], correctAnswer: "百済", hint: "倭王武は百済を含む朝鮮半島の軍事権を要求したんだ。でも、百済だけは認められなかった。歌の「くだらないもの」は「百済無いもの」というわけ。" }
     ] },
@@ -141,6 +141,8 @@ const sfxResults = document.getElementById('sfx-results');
 // ゲームの状態を管理する変数
 let speechQueue = [];
 let isBgmPlaying = false;
+let gameModeToStart = null; // 'quiz' or 'recall'
+
 // 早押しクイズ編用の変数
 let quizCurrentPoem = null;
 let quizRemainingPoems = [];
@@ -164,20 +166,46 @@ let recallMistakes = []; // 間違えた問題を記録
 
 // --- イベントリスナー ---
 startQuizGameBtn.addEventListener('click', () => {
+    gameModeToStart = 'quiz';
+    setupReadyScreen();
+});
+
+startReadingGameBtn.addEventListener('click', () => {
+    gameModeToStart = 'recall';
+    setupReadyScreen();
+});
+
+startButton.addEventListener('click', () => {
+    if (gameModeToStart === 'quiz') {
+        startGame(true);
+    } else if (gameModeToStart === 'recall') {
+        startRecallGame();
+    }
+});
+
+function setupReadyScreen() {
     selectionContainer.classList.add('hidden');
     gameContainer.classList.remove('hidden');
+
+    if (gameModeToStart === 'quiz') {
+        kamiKuText.textContent = "　　　早押しカルタクイズ編　1～20";
+        messageEl.textContent = "集中力を高め、限界に挑んでください！！";
+    } else {
+        kamiKuText.textContent = "　　読み上げかるた想起編　1～20";
+        messageEl.textContent = "記憶を頼りに、正しい札を見つけ出せ！";
+    }
+    shimoKuText.textContent = "";
+    remainingCountEl.textContent = karutaData.length;
+    scoreEl.textContent = 0;
+    torifudaContainer.innerHTML = ''; // 札はまだ表示しない
+    startButton.style.display = 'block'; // スタートボタンを表示
+
     if (bgmAudio && bgmAudio.src) {
         bgmAudio.volume = 0.3;
         bgmAudio.play().catch(e => console.error("BGM playback failed:", e));
         isBgmPlaying = true;
     }
-});
-startButton.addEventListener('click', () => startGame(true));
-startReadingGameBtn.addEventListener('click', () => {
-    selectionContainer.classList.add('hidden');
-    gameContainer.classList.remove('hidden');
-    startRecallGame();
-});
+}
 
 
 // --- 便利関数 ---
@@ -452,7 +480,76 @@ function proceedToNextRound() {
     setTimeout(startGame, 1000);
 }
 
-function showFinalResults(mode) {
+// ▼▼▼ ここからAIコメント生成機能を追加 ▼▼▼
+async function generateAiComment(score, ranks, mistakes) {
+    let prompt = `あなたは「百年一首」という日本の歴史を題材にしたカルタクイズゲームの、フレンドリーで熱心なコーチです。プレイヤーのゲーム結果を分析し、具体的で心のこもった、世界で一つだけの特別なコメントを日本語で生成してください。
+
+# 指示
+- プレイヤーの頑張りを具体的に褒め、次も挑戦したくなるような、ポジティブでやる気の出る言葉をかけてください。
+- 簡潔で読みやすい文章を心掛け、最低でも4文以上は使って言葉をかけてください。短い定型文だとプレーヤーが嬉しくありません。
+- プレイヤーに直接語りかけるような、親しみやすい口調（です・ます調）でお願いします。
+- 特に素晴らしい点（例：SSランクが多い、高得点）や、特徴的な点（例：特定の間違いが多い）に触れてください。
+- 各札を取るのにかかった時間や、クイズ回答までの時間、時間切れ等も注目ポイントです。ほめたり励ましたりしましょう。
+- 間違いを指摘する際は、責めるのではなく、「惜しかったですね！」「これは紛らわしいですよね」のように共感を示し、励ますような表現を心がけてください。
+
+# プレイヤーのゲーム結果
+- 総合得点: ${score}点
+- ランクごとの獲得回数: 
+  - SSランク: ${ranks.SS}回
+  - Sランク: ${ranks.S}回
+  - Aランク: ${ranks.A}回
+  - Bランク: ${ranks.B}回
+  - Cランク: ${ranks.C}回
+  - Dランク: ${ranks.D}回
+  - Eランク（お手つき・時間切れ）: ${ranks.E}回
+- 具体的なミスの内容:
+`;
+
+    if (mistakes.length === 0) {
+        prompt += "- ミスはありませんでした！完璧です！";
+    } else {
+        const summarizedMistakes = mistakes.slice(0, 5).map(m => { // あまりに多いと長くなるので5つまで
+            if (m.reason === 'クイズ不正解') {
+                return `- 歌「${m.poem.kami.replace(/\//g, '')}」のクイズ「${m.quiz.question}」でのミス`;
+            } else {
+                return `- 歌「${m.poem.kami.replace(/\//g, '')}」での${m.reason}`;
+            }
+        }).join('\n');
+        prompt += summarizedMistakes;
+    }
+
+    try {
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result.candidates && result.candidates.length > 0 &&
+            result.candidates[0].content && result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0) {
+            return result.candidates[0].content.parts[0].text;
+        } else {
+             return "素晴らしいプレイでした！もう一度挑戦して、さらに高みを目指しましょう！";
+        }
+    } catch (error) {
+        console.error("AI comment generation failed:", error);
+        return "今回のプレイもお見事でした！次も楽しみにしています！"; // エラー時の代替コメント
+    }
+}
+
+async function showFinalResults(mode) {
     if (quizRoundTimer) clearTimeout(quizRoundTimer);
     if (bgmAudio && bgmAudio.src) {
         bgmAudio.currentTime = 0;
@@ -464,18 +561,14 @@ function showFinalResults(mode) {
     playSound(sfxResults);
     const resultsContent = document.getElementById('results-content');
     
-    let comment = '';
-    const maxRankScore = rankPoints.SS * karutaData.length;
-    const maxQuizScore = QUIZ_CORRECT_BONUS * karutaData.reduce((sum, poem) => sum + poem.quizzes.length, 0);
-    const maxScore = maxRankScore + maxQuizScore;
-    const perfectThreshold = maxScore * 0.95;
-    const excellentThreshold = maxScore * 0.8;
-    if (quizTotalScore >= perfectThreshold) comment = "パーフェクト！完全に極めましたね！";
-    else if (quizTotalScore >= excellentThreshold) comment = "エクセレント！素晴らしいです！";
-    else if (quizTotalScore >= 80) comment = "ワンダフル！かなりの速さです";
-    else if (quizTotalScore >= 60) comment = "コングラチュレーション！十分及第点です";
-    else if (quizTotalScore >= 30) comment = "憶えてきたね！いい感じだよ！";
-    else comment = "繰り返せば必ず憶えられるよ！ここから頑張ろう！";
+    // まずは基本的なHTML構造を表示
+    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">AIがコメントを生成中...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
+
+    // AIコメントを非同期で生成して表示
+    if (mode === "quiz") {
+        const aiComment = await generateAiComment(quizTotalScore, quizRankCounts, quizMistakes);
+        document.getElementById('results-comment').textContent = aiComment;
+    }
 
     let reviewHtml = '';
     if (quizMistakes.length > 0) {
@@ -505,9 +598,9 @@ function showFinalResults(mode) {
     } else {
         reviewHtml = '<div class="review-area"><h2>復習コーナー</h2><p>すごい！ミスは一つもなかったね！完璧！</p></div>';
     }
-
-    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">${comment}</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table> ${reviewHtml} <button onclick="location.reload()">もう一度プレイ</button>`;
+    document.getElementById('review-area-container').innerHTML = reviewHtml;
 }
+// ▲▲▲ AIコメント生成機能の追加ここまで ▲▲▲
 
 // --- 読み上げかるた想起編 ---
 function startRecallGame() {

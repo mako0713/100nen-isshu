@@ -192,6 +192,10 @@ h1 {
     cursor: pointer;
     transition: background-color 0.2s;
     margin-top: 2rem;
+    /* ▼▼▼ 中央揃えにするために追記 ▼▼▼ */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #start-button:hover {
@@ -218,9 +222,7 @@ h1 {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 200;
     overflow-y: auto;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* 上揃えに変更 */
+    display: block; /* flexboxによる中央揃えを解除 */
 }
 
 #results-content {
@@ -253,12 +255,6 @@ h1 {
     align-items: center;
     z-index: 100;
 }
-
-/* #results-containerが上揃えになったので、クイズモーダルは中央揃えを維持する */
-#quiz-modal {
-    align-items: center;
-}
-
 
 .modal-content {
     background-color: white;
@@ -325,27 +321,4 @@ h1 {
     background-color: #eef7ff;
     padding: 1rem;
     border-radius: 0.5rem;
-}
-/* クレジット表示用のスタイル */
-#credit-container {
-    margin-top: 4rem;
-    font-size: 1.4rem;
-    color: #555;
-}
-
-#credit-container p {
-    margin: 0.5rem 0;
-}
-
-#credit-container a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-#credit-container a:hover {
-    text-decoration: underline;
-}
-
-.credit-title {
-    font-weight: bold;
 }
