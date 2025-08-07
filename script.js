@@ -189,10 +189,10 @@ function setupReadyScreen() {
 
     if (gameModeToStart === 'quiz') {
         kamiKuText.textContent = "　　　早押しカルタクイズ編　1～20";
-        messageEl.textContent = "集中力を高め、限界に挑んでください！！";
+        messageEl.textContent = "「通常のかるた×クイズ」なゲーム。制限時間は15秒。集中して、自身の限界に挑戦しよう！";
     } else {
-        kamiKuText.textContent = "　　読み上げかるた想起編　1～20";
-        messageEl.textContent = "記憶を頼りに、正しい札を見つけ出せ！";
+        kamiKuText.textContent = "　　　読み上げかるた想起編　1～20";
+        messageEl.textContent = "年号から歌をできるだけ早く想起し、高得点を目指そう！";
     }
     shimoKuText.textContent = "";
     remainingCountEl.textContent = karutaData.length;
@@ -484,13 +484,25 @@ function proceedToNextRound() {
 async function generateAiComment(score, ranks, mistakes) {
     let prompt = `あなたは「百年一首」という日本の歴史を題材にしたカルタクイズゲームの、フレンドリーで熱心なコーチです。プレイヤーのゲーム結果を分析し、具体的で心のこもった、世界で一つだけの特別なコメントを日本語で生成してください。
 
-# 指示
-- プレイヤーの頑張りを具体的に褒め、次も挑戦したくなるような、ポジティブでやる気の出る言葉をかけてください。
-- 簡潔で読みやすい文章を心掛け、最低でも4文以上は使って言葉をかけてください。短い定型文だとプレーヤーが嬉しくありません。
-- プレイヤーに直接語りかけるような、親しみやすい口調（です・ます調）でお願いします。
-- 特に素晴らしい点（例：SSランクが多い、高得点）や、特徴的な点（例：特定の間違いが多い）に触れてください。
-- 各札を取るのにかかった時間や、クイズ回答までの時間、時間切れ等も注目ポイントです。ほめたり励ましたりしましょう。
-- 間違いを指摘する際は、責めるのではなく、「惜しかったですね！」「これは紛らわしいですよね」のように共感を示し、励ますような表現を心がけてください。
+# あなたの役割（ペルソナ）
+あなたは「百年一首」という日本の歴史を題材にしたカルタクイズゲームの、熱心でフレンドリーなコーチです。プレイヤーに直接語りかけるような、親しみやすい「～だよ/～だよね」「～だと思うよ/思うな」「～があったよ/あったね」という優しく語りかけるように話してください。
+
+# あなたのタスク
+以下のプレイヤーのゲーム結果を分析し、その内容に基づいた、具体的で心のこもった、世界で一つだけの特別なフィードバックコメントを生成してください。
+
+# コメント作成のルール
+- 必ず4文以上で、プレイヤーの頑張りを具体的に褒めてください。ただ、長すぎるのも良くないので、200文字以内には収めてください。
+- 総合得点やSSランクの回数など、特に素晴らしい点を指摘してください。
+- Aランク以上で取れているということは、歌を憶え、下の句が読まれる前に取れているということ。中でもSSランクは読まれた瞬間に瞬時に想起して瞬時に見つけてられているし、Sランクも相当に想起の力と探す力の双方が高いレベルで備わっている。
+- 全てがAランク以上人は、既にすべての札を憶えているので、それを踏まえた特別なアドバイスをしてあげてほしい。
+- 「むさいオッサン」の630を631、「ろくな二人」の672を697、「無礼な」の607を601と間違えた場合は、共感を示してあげてください。
+- ミスの内容に触れる際は、決して責めず、「これは難しいよね」「惜しい！あと一歩だったね」のように共感と励ましの言葉を添えてください。
+- ランクEは「お手つき」や「時間切れ」が原因です。札を憶えるほど、探す力が増すほどに、どんどん札が早く取れるようになることを伝えてください。
+- 最終的に、プレイヤーが「また挑戦したい！」と思えるような、ポジティブな締めくくりにしてください。
+
+# 良いコメントの例
+「総合得点105点、そしてSSランク5回は本当に素晴らしいね！特に序盤の歌は、一瞬で札を取れていたよ。すごい集中力！『白村江の戦い』のクイズは少し難しかったかもしれないけれど、歴史の背景を知ると、もっと歌が面白くなるよ。次の挑戦では、全問正解を目指して頑張ろう！応援しているよ！」
+「総合得点55点、少しずつ慣れてきたみたいだね！いい感じ！そういえば、『後漢から』の歌は瞬時に反応してたね！びっくりしたよ。630年の『むさいオッサン』は、631年かと思っちゃうよね！分かるわ～。でも、実はこの歌は、「ロミオ(630)じゃない」も年号のヒントになってるから、注目してね！繰り返せば、どんどん得意になるよ！
 
 # プレイヤーのゲーム結果
 - 総合得点: ${score}点
@@ -522,7 +534,7 @@ async function generateAiComment(score, ranks, mistakes) {
         let chatHistory = [];
         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
         const payload = { contents: chatHistory };
-        const apiKey = ""; 
+        const apiKey = "AIzaSyCC3eKyRq-uQIgZ9ygHylwbAlY-lygs10Q"; 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -535,7 +547,7 @@ async function generateAiComment(score, ranks, mistakes) {
             throw new Error(`API request failed with status ${response.status}`);
         }
 
-        const result = await response.json();
+        const result = await response.json(); // ★★★ここに await を追加しました！★★★
         if (result.candidates && result.candidates.length > 0 &&
             result.candidates[0].content && result.candidates[0].content.parts &&
             result.candidates[0].content.parts.length > 0) {
@@ -562,7 +574,7 @@ async function showFinalResults(mode) {
     const resultsContent = document.getElementById('results-content');
     
     // まずは基本的なHTML構造を表示
-    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">AIがコメントを生成中...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
+    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">プレイ分析と復習内容を準備するからちょっと待ってね...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
 
     // AIコメントを非同期で生成して表示
     if (mode === "quiz") {
