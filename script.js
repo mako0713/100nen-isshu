@@ -531,14 +531,16 @@ async function generateAiComment(score, ranks, mistakes) {
     }
 
     try {
+        // ▼▼▼ リクエスト先を自分のサーバーに変更 ▼▼▼
         const response = await fetch('/generate-comment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ prompt: prompt }) // promptを送信
         });
+        // ▲▲▲ ここまで変更 ▲▲▲
 
         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
+            throw new Error(`API request failed with status ${response.status}`);
         }
 
         const result = await response.json();
@@ -551,7 +553,7 @@ async function generateAiComment(score, ranks, mistakes) {
         }
     } catch (error) {
         console.error("AI comment generation failed:", error);
-        return "お疲れ様でした！何度も挑戦して、さらに高みを目指しましょう！";
+        return "今回のプレイもお見事でした！次も楽しみにしています！"; // エラー時の代替コメント
     }
 }
 
@@ -568,7 +570,7 @@ async function showFinalResults(mode) {
     const resultsContent = document.getElementById('results-content');
     
     // まずは基本的なHTML構造を表示
-    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">プレイ分析と復習内容を準備するからちょっと待ってね...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
+    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">AIがコメントを生成中...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
 
     // AIコメントを非同期で生成して表示
     if (mode === "quiz") {
