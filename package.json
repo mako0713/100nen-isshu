@@ -1,0 +1,17 @@
+{
+  "name": "100nen-isshu2",
+  "version": "1.0.0",
+  "description": "百人一首かるたの歴史版、百年一首かるた。かるた×クイズで日本史の年号＆事項の知識を身に付けるゲームです。",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}
