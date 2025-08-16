@@ -27,7 +27,7 @@ const karutaData = [
     { id: 6, kami: "怒り買う/「日出ずる処の天子」の/記述", kami_yomi: "いかりかう/ひいずるところの/てんしのきじゅつ", shimo: "無礼な国書の 遣隋使", shimo_yomi: "ぶれいなこくしょの/けんずいし", quizzes: [
         { type: "numpad", question: "遣隋使を派遣したのは何年？", correctAnswer: "607", mnemonic_word: "無礼な", hint: "下の句の「無礼な(607)」国書が「607年」を表しているよ！" },
         { type: "choice", question: "607年に派遣された遣隋使は誰？", options: ["小野妹子", "犬上御田鍬", "高向玄理", "旻", "南淵請安"], correctAnswer: "小野妹子", hint: "遣隋使といえば小野妹子！名前は女性っぽいけど男性だよ。" },
-        { type: "choice", question: "国書に対して不機嫌になったという隋の皇帝は誰？", options: ["煬帝", "文帝", "高祖", "太宗", "煬堅"], correctAnswer: "煬帝", hint: "歌の「怒り買う」の相手が、隋の2代目皇帝「煬帝」だね。" }
+        { type: "choice", question: "国書に対して不機嫌になったという隋の皇帝は誰？", options: ["煬帝", "文帝", "高祖", "太宗", "煬堅"], correctAnswer: "煬帝", hint: "歌の「怒り買う」の相手が、隋の2代目皇帝「煬帝」だね。世に「王」は数多いてよいけれど、「天子」は中国の皇帝ただ一人！という感覚なのだと思うな" }
     ] },
     { id: 7, kami: "ロミオじゃない/残念ながら/御田鍬は", kami_yomi: "ろみおじゃない/ざんねんながら/みたすきは", shimo: "むさいオッサン 遣唐使！", shimo_yomi: "むさいおっさん/けんとうし", quizzes: [
         { type: "numpad", question: "遣唐使が派遣されたのは何年？", correctAnswer: "630", mnemonic_word: "むさい", hint: "下の句の「むさいオッサン(630)」が「630年」を表しているよ！あとは、実はロミオ(630)もね" },
@@ -90,7 +90,7 @@ const karutaData = [
         { type: "choice", question: "894年に遣唐使を廃止したのは誰？", options: ["菅原道真", "藤原時平", "宇多天皇", "最澄", "円仁"], correctAnswer: "菅原道真", hint: "歌に「道真は」とあるのが菅原道真のことだよ。" }
     ] },
     { id: 19, kami: "関東の/各地に残る/首塚伝承", kami_yomi: "かんとうの/かくちにのこる/くびづかでんしょう", shimo: "平将門 首三個？", shimo_yomi: "たいらのまさかど/くびさんこ？", quizzes: [
-        { type: "numpad", question: "平将門の乱は何年？", correctAnswer: "935", mnemonic_word: "首三個", hint: "下の句の「首三個(くびさんこ)」が「935年」を表しているよ！首塚は東京・大手町が有名だけど、例えば埼玉・幸手(さって)にもあるんだ。「飛び去って(幸手)行った 首三個？」にしようか、大いに悩みました" },
+        { type: "numpad", question: "平将門の乱は何年？", correctAnswer: "935", mnemonic_word: "首三個", hint: "下の句の「首三個(くびさんこ)」が「935年」を表しているよ！乱後、平安京で晒された将門の首は関東へと「飛び去って行った」という伝承があって、その首塚は東京・大手町が一番有名なんだ。でも、例えば埼玉の幸手(さって)にも首塚伝承はあるんだ。もしかしたら、「飛びさって(幸手)行った」という伝承だったのかも笑？" },
         { type: "choice", question: "935年に乱を起こしたのは誰？", options: ["平将門", "藤原純友", "藤原道長", "源頼朝", "平清盛"], correctAnswer: "平将門", hint: "下の句に「平将門」とあるね！" },
         { type: "choice", question: "平将門の乱はどこで起こった？", options: ["関東地方", "東北地方", "瀬戸内海", "京都", "九州"], correctAnswer: "関東地方", hint: "歌の「関東の」がヒントだよ！" }
     ] },
@@ -488,10 +488,10 @@ async function generateAiComment(score, ranks, mistakes) {
 あなたは「百年一首」という日本の歴史を題材にしたカルタクイズゲームの、熱心でフレンドリーなコーチです。プレイヤーに直接語りかけるような、親しみやすい「～だよ/～だよね」「～だと思うよ/思うな」「～があったよ/あったね」という優しく語りかけるように話してください。
 
 # あなたのタスク
-以下のプレイヤーのゲーム結果を分析し、その内容に基づいた、具体的で心のこもった、世界で一つだけの特別なフィードバックコメントを生成してください。
+以下のプレイヤーのゲーム結果を分析し、その内容に基づいた、具体的で次回以降のプレーに活かせる、世界で一つだけの特別なフィードバックコメントを生成してください。
 
 # コメント作成のルール
-- 必ず4文以上で、プレイヤーの頑張りを具体的に褒めてください。ただ、長すぎるのも良くないので、200文字以内には収めてください。
+- 必ず4文以上で、プレイヤーの頑張りを具体的に褒めてください。ただ、長すぎるのも良くないので、140文字以内には収めてください。
 - 総合得点やSSランクの回数など、特に素晴らしい点を指摘してください。
 - Aランク以上で取れているということは、歌を憶え、下の句が読まれる前に取れているということ。中でもSSランクは読まれた瞬間に瞬時に想起して瞬時に見つけてられているし、Sランクも相当に想起の力と探す力の双方が高いレベルで備わっている。
 - 全てがAランク以上人は、既にすべての札を憶えているので、それを踏まえた特別なアドバイスをしてあげてほしい。
@@ -549,11 +549,11 @@ async function generateAiComment(score, ranks, mistakes) {
             result.candidates[0].content.parts.length > 0) {
             return result.candidates[0].content.parts[0].text;
         } else {
-             return "素晴らしいプレイでした！もう一度挑戦して、さらに高みを目指しましょう！";
+             return "お疲れさまでした！何度も挑戦して、さらなる高みを目指そう！";
         }
     } catch (error) {
         console.error("AI comment generation failed:", error);
-        return "今回のプレイもお見事でした！次も楽しみにしています！"; // エラー時の代替コメント
+        return "お疲れさまでした！何度も挑戦して、さらに高みを目指そう！"; // エラー時の代替コメント
     }
 }
 
@@ -570,7 +570,7 @@ async function showFinalResults(mode) {
     const resultsContent = document.getElementById('results-content');
     
     // まずは基本的なHTML構造を表示
-    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">AIがコメントを生成中...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
+    resultsContent.innerHTML = `<h1>結果発表</h1><p id="results-comment">ちょっと待ってね！分析コメントと復習コーナーを準備中です...</p><p id="total-score">総合得点: ${quizTotalScore} 点</p><table class="results-table"><tr><th>ランク</th><th>回数</th></tr><tr><td>SS (6点)</td><td>${quizRankCounts.SS} 回</td></tr><tr><td>S (5点)</td><td>${quizRankCounts.S} 回</td></tr><tr><td>A (4点)</td><td>${quizRankCounts.A} 回</td></tr><tr><td>B (3点)</td><td>${quizRankCounts.B} 回</td></tr><tr><td>C (2点)</td><td>${quizRankCounts.C} 回</td></tr><tr><td>D (1点)</td><td>${quizRankCounts.D} 回</td></tr><tr><td>E (0点)</td><td>${quizRankCounts.E} 回</td></tr></table><div id="review-area-container"></div><button onclick="location.reload()">もう一度プレイ</button>`;
 
     // AIコメントを非同期で生成して表示
     if (mode === "quiz") {
